@@ -15,7 +15,12 @@
         </div>
 
         <div id="gameView">
-            <canvas id="screen" width="800" height="600"></canvas>
+            <canvas
+                id="screen" width="800" height="600"
+                onmousemove="app.input.mouseMove(event)"
+                onmousedown="app.input.mouseUpDown(event)"
+                onmouseup="app.input.mouseUpDown(event)">
+            </canvas>
         </div>
 
         <div id="footer">
@@ -23,6 +28,7 @@
             <p>"mute", "unmute" by mikhog - <a href="http://opengameart.org/content/play-pause-mute-and-unmute-buttons">Source</a> under CC-0</p>
         </div>
 
+        <script src="library/input.js" type="text/javascript"></script>
         <script src="library/game.js" type="text/javascript"></script>
         <script type="text/javascript">
             var app = new App()
