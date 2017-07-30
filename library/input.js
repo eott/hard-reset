@@ -10,13 +10,11 @@ Input = function(app) {
     this.registerListeners()
 }
 
-Input.prototype.registerListeners = function() {
-    window.addEventListener("keydown", function(e) {this.keyEvent(1, e.keyCode);}, false)
-    window.addEventListener("keyup", function(e) {this.keyEvent(0, e.keyCode);}, false)
-}
-
-
 Input.prototype.mouseUpDown = function(ev) {
+    if (this.mouseStatus == 1 && ev.buttons == 0) {
+        this.app.systems.handleMouseClick(ev)
+    }
+
     this.mouseStatus = ev.buttons
 }
 
@@ -47,4 +45,9 @@ Input.prototype.keyEvent = function(type, key) {
     } else if (this.keyStatus[index] > 0 && type == 0) {
         this.keyStatus[index] = 0
     }
+}
+
+Input.prototype.registerListeners = function() {
+    window.addEventListener("keydown", function(e) {this.keyEvent(1, e.keyCode);}, false)
+    window.addEventListener("keyup", function(e) {this.keyEvent(0, e.keyCode);}, false)
 }

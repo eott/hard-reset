@@ -6,6 +6,10 @@ StarSystems = function(app) {
     this.systems = []
     this.nrOfSystems = 10
 
+    this.flows = []
+    this.isDrawingFlow = false
+    this.flowSource = undefined
+
     this.boundingBox = [200, 300]
 
     this.init()
@@ -89,6 +93,7 @@ StarSystems.prototype.draw = function() {
         // Draw bounding box
         this.ctx.strokeStyle = "#ffffff"
         this.ctx.fillStyle = "#ffffff"
+        this.ctx.lineWidth = 2
         this.ctx.beginPath()
         this.ctx.moveTo(x, y)
         this.ctx.lineTo(x + this.boundingBox[0], y)
@@ -115,5 +120,61 @@ StarSystems.prototype.draw = function() {
         // Draw body
         c = this.systems[i].colorBody
         this.gfx.circle(x + 100, y + 60, 15, 'rgba(' + c[0] + ','+ c[1] + ',' + c[2] + ',1.0)', 1, true)
+
+        // Draw inflow/outflow sockets
+        this.gfx.circle(x + 30, y + 200, 15, "#ffffff", 2, false)
+        this.gfx.circle(x + 80, y + 200, 15, "#ffffff", 2, false)
+    }
+
+    this.ctx.fillStyle = "#8080ff"
+    this.ctx.strokeStyle = "#8080ff"
+    this.ctx.lineWidth = 4
+
+    // Draw current flow line
+    if (this.isDrawingFlow) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(this.flowSource.x + 80 + this.app.shiftX, this.flowSource.y + 200 + this.app.shiftY)
+        this.ctx.lineTo(this.app.input.mousePos[0], this.app.input.mousePos[1])
+        this.ctx.closePath()
+        this.ctx.stroke()
+    }
+
+    // Draw existing flow lines
+    for (var i = 0; i < this.flows.length; i++) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(this.flows[i][0].x + 80 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY)
+        this.ctx.lineTo(this.flows[i][1].x + 30 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY)
+        this.ctx.closePath()
+        this.ctx.stroke()
+    }
+}
+
+StarSystems.prototype.handleMouseClick = function(ev) {
+    for (var i = 0; i < this.nrOfSystems; i++) {
+        var x = ev.layerX - this.app.shiftX
+        var y = ev.layerY - this.app.shiftY
+
+        if (this.isDrawingFlow) {
+            var distance = Math.sqrt(
+                (x - this.systems[i].x - 30) * (x - this.systems[i].x - 30)
+                + (y - this.systems[i].y - 200) * (y - this.systems[i].y - 200)
+            )
+
+            if (distance <= 15 && this.systems[i].name != this.flowSource.name) {
+                this.isDrawingFlow = false
+                this.flows[this.flows.length] = [this.flowSource, this.systems[i]]
+                this.flowSource = undefined
+            }
+        } else {
+            var distance = Math.sqrt(
+                (x - this.systems[i].x - 80) * (x - this.systems[i].x - 80)
+                + (y - this.systems[i].y - 200) * (y - this.systems[i].y - 200)
+            )
+
+            if (distance <= 15) {
+                this.isDrawingFlow = true
+                this.flowSource = this.systems[i]
+            }
+        }
     }
 }
