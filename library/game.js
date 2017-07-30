@@ -21,6 +21,7 @@ App.prototype.draw = function() {
 
     this.ctx.font = "17px Consolas"
     this.ctx.fillStyle = "#ffffff"
+    this.ctx.strokeStyle = "#ffffff"
 
     this.systems.draw()
 }
