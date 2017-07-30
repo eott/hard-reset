@@ -9,11 +9,15 @@ App = function() {
     this.gfx = new GFX(this)
     this.systems = new StarSystems(this)
 
-    this.loop = window.setInterval('app.gameLoop()', 50);
+    this.framerate = 20
+    this.simSpeed = 1
+
+    this.loop = window.setInterval('app.gameLoop()', 1000 / this.framerate);
 }
 
 App.prototype.gameLoop = function() {
     this.draw()
+    this.systems.update()
 }
 
 App.prototype.draw = function() {

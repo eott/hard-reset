@@ -21,12 +21,21 @@ StarSystems.prototype.init = function() {
         newSystem = {}
         isValid = true
 
+        newSystem.resources = {}
+        newSystem.resources.flux = 1e6
+        newSystem.resources.am = 0
+        newSystem.resources.sm = 1e6
+        newSystem.resources.se = 1e9
+        newSystem.producesAM = true
+
         if (nrCreated == 0) {
             newSystem.x = 350
             newSystem.y = 200
             newSystem.name = "Alpha Black"
             newSystem.colorAura = [255, 255, 255]
             newSystem.colorBody = [0, 0, 0]
+            newSystem.resources.se = 0
+            newSystem.resources.flux = 0
         } else {
             newSystem.x = Math.random() * 2000 - 1000
             newSystem.y = Math.random() * 2000 - 1000
@@ -34,11 +43,6 @@ StarSystems.prototype.init = function() {
             newSystem.colorAura = [255, 50, 0]
             newSystem.colorBody = [255, 50, 50]
         }
-
-        newSystem.resources = {}
-        newSystem.resources.flux = 1e6
-        newSystem.resources.am = 0
-        newSystem.resources.sm = 1e6
 
         for (var i = 0; i < this.systems.length; i++) {
             if (
@@ -106,9 +110,9 @@ StarSystems.prototype.draw = function() {
         this.ctx.fillText(this.systems[i].name, x + 10, y + 20)
 
         // Write resources
-        this.ctx.fillText("Fx: " + this.systems[i].resources.flux, x + 10, y + 120)
-        this.ctx.fillText("AM: " + this.systems[i].resources.am, x + 10, y + 140)
-        this.ctx.fillText("SM: " + this.systems[i].resources.sm, x + 10, y + 160)
+        this.ctx.fillText("Fx: " + this.systems[i].resources.flux.toExponential(2), x + 10, y + 120)
+        this.ctx.fillText("AM: " + this.systems[i].resources.am.toExponential(2), x + 10, y + 140)
+        this.ctx.fillText("SM: " + this.systems[i].resources.sm.toExponential(2), x + 10, y + 160)
 
         // Draw aura
         var grad = this.app.ctx.createRadialGradient(x + 100, y + 60, 0, x + 100, y + 60, 30)
@@ -175,6 +179,39 @@ StarSystems.prototype.handleMouseClick = function(ev) {
                 this.isDrawingFlow = true
                 this.flowSource = this.systems[i]
             }
+        }
+    }
+}
+
+StarSystems.prototype.checkFlowsForSystem = function(nr) {
+    remainingFlux = this.systems[nr].resources.flux
+
+    for (var i = 0; i < this.flows.length; i++) {
+        if (this.flows[i][0].name == this.systems[nr].name) {
+            var amTransfer = Math.min(1e4 / this.app.framerate, this.systems[nr].resources.am)
+            remainingFlux -= Math.max(0, amTransfer * 5e2)
+            this.systems[nr].resources.am -= amTransfer
+            this.flows[i][1].resources.am += amTransfer
+        }
+    }
+
+    return remainingFlux
+}
+
+StarSystems.prototype.update = function() {
+    for (var i = 0; i < this.nrOfSystems; i++) {
+        this.systems[i].resources.se -= this.systems[i].resources.flux * this.app.simSpeed / this.app.framerate
+        this.systems[i].resources.flux = Math.max(0, this.systems[i].resources.se / 200 + 3e5)
+
+        if (this.systems[i].resources.se <= 0) {
+            this.systems[i].resources.se = 0
+            this.systems[i].resources.flux = 0
+        }
+
+        remainingFlux = this.checkFlowsForSystem(i)
+
+        if (this.systems[i].producesAM) {
+            this.systems[i].resources.am += remainingFlux / 3e3
         }
     }
 }
