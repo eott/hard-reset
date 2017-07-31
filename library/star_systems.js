@@ -6,9 +6,9 @@ StarSystems = function(app) {
     this.systems = []
     this.nrOfSystems = 10
 
-    this.flows = []
-    this.isDrawingFlow = false
-    this.flowSource = undefined
+    this.AMFlows = []
+    this.isDrawingAMFlow = false
+    this.AMFlowSource = undefined
 
     this.boundingBox = [200, 320]
 
@@ -174,23 +174,23 @@ StarSystems.prototype.draw = function() {
     this.ctx.lineWidth = 4
 
     // Draw current flow line
-    if (this.isDrawingFlow) {
+    if (this.isDrawingAMFlow) {
         this.ctx.beginPath()
-        this.ctx.moveTo(this.flowSource.x + 170 + this.app.shiftX, this.flowSource.y + 200 + this.app.shiftY)
+        this.ctx.moveTo(this.AMFlowSource.x + 170 + this.app.shiftX, this.AMFlowSource.y + 200 + this.app.shiftY)
         this.ctx.lineTo(this.app.input.mousePos[0], this.app.input.mousePos[1])
         this.ctx.closePath()
         this.ctx.stroke()
     }
 
     // Draw existing flow lines
-    for (var i = 0; i < this.flows.length; i++) {
+    for (var i = 0; i < this.AMFlows.length; i++) {
         this.ctx.fillStyle = "#8080ff"
         this.ctx.strokeStyle = "#8080ff"
         this.ctx.lineWidth = 4
 
         // Line
-        var from = [this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY]
-        var to = [this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY]
+        var from = [this.AMFlows[i][0].x + 170 + this.app.shiftX, this.AMFlows[i][0].y + 200 + this.app.shiftY]
+        var to = [this.AMFlows[i][1].x + 120 + this.app.shiftX, this.AMFlows[i][1].y + 200 + this.app.shiftY]
         this.ctx.beginPath()
         this.ctx.moveTo(from[0], from[1])
         this.ctx.lineTo(to[0], to[1])
@@ -219,30 +219,30 @@ StarSystems.prototype.handleMouseClick = function(ev) {
     var y = ev.layerY - this.app.shiftY
 
     // Flow lines cancel symbol
-    for (var i = 0; i < this.flows.length; i++) {
-        var from = [this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY]
-        var to = [this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY]
+    for (var i = 0; i < this.AMFlows.length; i++) {
+        var from = [this.AMFlows[i][0].x + 170 + this.app.shiftX, this.AMFlows[i][0].y + 200 + this.app.shiftY]
+        var to = [this.AMFlows[i][1].x + 120 + this.app.shiftX, this.AMFlows[i][1].y + 200 + this.app.shiftY]
         var cx = from[0] + 0.5 * (to[0] - from[0]) - this.app.shiftX
         var cy = from[1] + 0.5 * (to[1] - from[1]) - this.app.shiftY
         var distance = Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))
 
         if (distance <= 7) {
-            this.flows.splice(i, 1)
+            this.AMFlows.splice(i, 1)
         }
     }
 
     for (var i = 0; i < this.nrOfSystems; i++) {
         // Drawing flow lines
-        if (this.isDrawingFlow) {
+        if (this.isDrawingAMFlow) {
             var distance = Math.sqrt(
                 (x - this.systems[i].x - 120) * (x - this.systems[i].x - 120)
                 + (y - this.systems[i].y - 200) * (y - this.systems[i].y - 200)
             )
 
-            if (distance <= 15 && this.systems[i].name != this.flowSource.name) {
-                this.isDrawingFlow = false
-                this.flows[this.flows.length] = [this.flowSource, this.systems[i]]
-                this.flowSource = undefined
+            if (distance <= 15 && this.systems[i].name != this.AMFlowSource.name) {
+                this.isDrawingAMFlow = false
+                this.AMFlows[this.AMFlows.length] = [this.AMFlowSource, this.systems[i]]
+                this.AMFlowSource = undefined
             }
         } else {
             var distance = Math.sqrt(
@@ -251,13 +251,13 @@ StarSystems.prototype.handleMouseClick = function(ev) {
             )
 
             if (distance <= 15) {
-                this.isDrawingFlow = true
-                this.flowSource = this.systems[i]
+                this.isDrawingAMFlow = true
+                this.AMFlowSource = this.systems[i]
             }
         }
 
         // Building button
-        if(!this.isDrawingFlow) {
+        if(!this.isDrawingAMFlow) {
             if (
                 x >= this.systems[i].x + 10
                 && x <= this.systems[i].x + this.boundingBox[0] - 10
@@ -285,17 +285,17 @@ StarSystems.prototype.handleMouseClick = function(ev) {
 StarSystems.prototype.checkFlowsForSystem = function(nr) {
     remainingFlux = this.systems[nr].resources.flux
 
-    for (var i = 0; i < this.flows.length; i++) {
-        if (this.flows[i][0].name == this.systems[nr].name) {
+    for (var i = 0; i < this.AMFlows.length; i++) {
+        if (this.AMFlows[i][0].name == this.systems[nr].name) {
             var amTransfer = Math.min(this.c_maxAMFlow, this.systems[nr].resources.am)
             if (remainingFlux > amTransfer * this.c_AMFlowCost) {
                 remainingFlux -= Math.max(0, amTransfer * this.c_AMFlowCost)
                 this.systems[nr].resources.am -= amTransfer
-                this.flows[i][1].resources.am += amTransfer
+                this.AMFlows[i][1].resources.am += amTransfer
             } else {
                 this.systems[nr].resources.am -= amTransfer
                 amTransfer -= (amTransfer - remainingFlux / this.c_AMFlowCost) * this.c_AMFlowCost2
-                this.flows[i][1].resources.am += amTransfer
+                this.AMFlows[i][1].resources.am += amTransfer
                 remainingFlux = 0
             }
         }
