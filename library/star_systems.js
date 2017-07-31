@@ -22,12 +22,12 @@ StarSystems = function(app) {
     this.c_AMFlowCost2 = 1e-1
     this.c_SMFlowCost = 5e-3
     this.c_minFlux = 3e5
-    this.c_fluxRate = 5e-2
+    this.c_fluxRate = 2e-2
     this.c_AMProductionRate = 3e-3
     this.c_dyswarmCostAM = 1e5
     this.c_dyswarmCostSM = 1e6
-    this.c_qpinchCostAM = 1e5
-    this.c_qpinchCostSM = 1e6
+    this.c_qpinchCostAM = 8e7
+    this.c_qpinchCostSM = this.c_dyswarmCostSM * 10
 
     this.init()
 }
@@ -41,8 +41,8 @@ StarSystems.prototype.init = function() {
         newSystem.resources = {}
         newSystem.resources.flux = 1e6
         newSystem.resources.am = 0
-        newSystem.resources.sm = 1e6
-        newSystem.resources.se = 1e9
+        newSystem.resources.sm = (1 + 0.4 * Math.random() - 0.2) * this.c_dyswarmCostSM
+        newSystem.resources.se = (1 + 0.4 * Math.random() - 0.2) * 1e9
         newSystem.producesAM = false
         newSystem.hasBuilding = false
 
@@ -54,7 +54,7 @@ StarSystems.prototype.init = function() {
             newSystem.colorBody = [0, 0, 0]
             newSystem.resources.se = 0
             newSystem.resources.am = 2 * this.c_dyswarmCostAM
-            newSystem.resources.sm = 2 * this.c_dyswarmCostSM
+            newSystem.resources.sm = 12 * this.c_dyswarmCostSM
             newSystem.resources.flux = 0
         } else {
             newSystem.x = Math.random() * 1600 - 800
