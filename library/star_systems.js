@@ -12,6 +12,13 @@ StarSystems = function(app) {
 
     this.boundingBox = [200, 300]
 
+    this.c_maxAMFlow = 1e4
+    this.c_AMFlowCost = 5e2
+    this.c_AMFlowCost2 = 1e-1
+    this.c_minFlux = 3e5
+    this.c_fluxRate = 5e-2
+    this.c_AMProductionRate = 3e-3
+
     this.init()
 }
 
@@ -188,10 +195,17 @@ StarSystems.prototype.checkFlowsForSystem = function(nr) {
 
     for (var i = 0; i < this.flows.length; i++) {
         if (this.flows[i][0].name == this.systems[nr].name) {
-            var amTransfer = Math.min(1e4 / this.app.framerate, this.systems[nr].resources.am)
-            remainingFlux -= Math.max(0, amTransfer * 5e2)
-            this.systems[nr].resources.am -= amTransfer
-            this.flows[i][1].resources.am += amTransfer
+            var amTransfer = Math.min(this.c_maxAMFlow, this.systems[nr].resources.am)
+            if (remainingFlux > amTransfer * this.c_AMFlowCost) {
+                remainingFlux -= Math.max(0, amTransfer * this.c_AMFlowCost)
+                this.systems[nr].resources.am -= amTransfer
+                this.flows[i][1].resources.am += amTransfer
+            } else {
+                this.systems[nr].resources.am -= amTransfer
+                amTransfer -= (amTransfer - remainingFlux / this.c_AMFlowCost) * this.c_AMFlowCost2
+                this.flows[i][1].resources.am += amTransfer
+                remainingFlux = 0
+            }
         }
     }
 
@@ -201,7 +215,7 @@ StarSystems.prototype.checkFlowsForSystem = function(nr) {
 StarSystems.prototype.update = function() {
     for (var i = 0; i < this.nrOfSystems; i++) {
         this.systems[i].resources.se -= this.systems[i].resources.flux * this.app.simSpeed / this.app.framerate
-        this.systems[i].resources.flux = Math.max(0, this.systems[i].resources.se / 200 + 3e5)
+        this.systems[i].resources.flux = Math.max(this.c_minFlux, this.c_fluxRate * this.systems[i].resources.se)
 
         if (this.systems[i].resources.se <= 0) {
             this.systems[i].resources.se = 0
@@ -211,7 +225,7 @@ StarSystems.prototype.update = function() {
         remainingFlux = this.checkFlowsForSystem(i)
 
         if (this.systems[i].producesAM) {
-            this.systems[i].resources.am += remainingFlux / 3e3
+            this.systems[i].resources.am += this.c_AMProductionRate * remainingFlux
         }
     }
 }
