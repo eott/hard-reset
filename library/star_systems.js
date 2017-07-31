@@ -184,20 +184,55 @@ StarSystems.prototype.draw = function() {
 
     // Draw existing flow lines
     for (var i = 0; i < this.flows.length; i++) {
+        this.ctx.fillStyle = "#8080ff"
+        this.ctx.strokeStyle = "#8080ff"
+        this.ctx.lineWidth = 4
+
+        // Line
+        var from = [this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY]
+        var to = [this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY]
         this.ctx.beginPath()
-        this.ctx.moveTo(this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY)
-        this.ctx.lineTo(this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY)
+        this.ctx.moveTo(from[0], from[1])
+        this.ctx.lineTo(to[0], to[1])
         this.ctx.closePath()
+        this.ctx.stroke()
+
+        // Cancel symbol
+        this.gfx.circle(
+            from[0] + 0.5 * (to[0] - from[0]),
+            from[1] + 0.5 * (to[1] - from[1]),
+            10, "#8080ff", 1, true
+        )
+        this.ctx.strokeStyle = "#000000"
+        this.ctx.lineWidth = 1
+        this.ctx.beginPath()
+        this.ctx.moveTo(from[0] + 0.5 * (to[0] - from[0]) - 3, from[1] + 0.5 * (to[1] - from[1]) - 3)
+        this.ctx.lineTo(from[0] + 0.5 * (to[0] - from[0]) + 3, from[1] + 0.5 * (to[1] - from[1]) + 3)
+        this.ctx.moveTo(from[0] + 0.5 * (to[0] - from[0]) - 3, from[1] + 0.5 * (to[1] - from[1]) + 3)
+        this.ctx.lineTo(from[0] + 0.5 * (to[0] - from[0]) + 3, from[1] + 0.5 * (to[1] - from[1]) - 3)
         this.ctx.stroke()
     }
 }
 
 StarSystems.prototype.handleMouseClick = function(ev) {
-    for (var i = 0; i < this.nrOfSystems; i++) {
-        var x = ev.layerX - this.app.shiftX
-        var y = ev.layerY - this.app.shiftY
+    var x = ev.layerX - this.app.shiftX
+    var y = ev.layerY - this.app.shiftY
 
-        // Flow lines
+    // Flow lines cancel symbol
+    for (var i = 0; i < this.flows.length; i++) {
+        var from = [this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY]
+        var to = [this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY]
+        var cx = from[0] + 0.5 * (to[0] - from[0]) - this.app.shiftX
+        var cy = from[1] + 0.5 * (to[1] - from[1]) - this.app.shiftY
+        var distance = Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))
+
+        if (distance <= 7) {
+            this.flows.splice(i, 1)
+        }
+    }
+
+    for (var i = 0; i < this.nrOfSystems; i++) {
+        // Drawing flow lines
         if (this.isDrawingFlow) {
             var distance = Math.sqrt(
                 (x - this.systems[i].x - 120) * (x - this.systems[i].x - 120)
