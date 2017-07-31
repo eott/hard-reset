@@ -358,10 +358,17 @@ StarSystems.prototype.handleMouseClick = function(ev) {
                 && y <= this.systems[i].y + 305
             ) {
                 if (i == 0) {
-                    this.systems[i].resources.am -= this.c_qpinchCostAM
-                    this.systems[i].resources.sm -= this.c_qpinchCostSM
-                    this.systems[i].hasBuilding = true
-                    this.app.triggerWin()
+                    if (
+                        !this.systems[i].hasBuilding
+                        && this.systems[i].resources.am >= this.c_qpinchCostAM
+                        && this.systems[i].resources.sm >= this.c_qpinchCostSM
+                    ) {
+                        this.systems[i].resources.am -= this.c_qpinchCostAM
+                        this.systems[i].resources.sm -= this.c_qpinchCostSM
+                        this.systems[i].hasBuilding = true
+                        this.app.triggerWin()
+                    }
+
                 } else {
                     if (
                         !this.systems[i].hasBuilding
