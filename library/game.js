@@ -18,6 +18,7 @@ App = function() {
 App.prototype.gameLoop = function() {
     this.draw()
     this.systems.update()
+    this.gfx.drawMinimap(this.systems.systems)
 }
 
 App.prototype.draw = function() {

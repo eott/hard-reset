@@ -25,8 +25,8 @@ Input.prototype.mouseMove = function(ev) {
     if (this.mouseStatus == 1) {
         this.app.shiftX += this.mouseDiff[0]
         this.app.shiftY += this.mouseDiff[1]
-        this.app.shiftX = Math.min(1000, Math.max(-1000, this.app.shiftX))
-        this.app.shiftY = Math.min(1000, Math.max(-1000, this.app.shiftY))
+        this.app.shiftX = Math.min(1000, Math.max(-200, this.app.shiftX))
+        this.app.shiftY = Math.min(1000, Math.max(-400, this.app.shiftY))
     }
 }
 

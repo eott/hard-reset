@@ -26,6 +26,8 @@ StarSystems = function(app) {
     this.c_AMProductionRate = 3e-3
     this.c_dyswarmCostAM = 1e5
     this.c_dyswarmCostSM = 1e6
+    this.c_qpinchCostAM = 1e5
+    this.c_qpinchCostSM = 1e6
 
     this.init()
 }
@@ -45,8 +47,8 @@ StarSystems.prototype.init = function() {
         newSystem.hasBuilding = false
 
         if (nrCreated == 0) {
-            newSystem.x = 350
-            newSystem.y = 200
+            newSystem.x = 50
+            newSystem.y = 50
             newSystem.name = "Alpha Black"
             newSystem.colorAura = [255, 255, 255]
             newSystem.colorBody = [0, 0, 0]
@@ -55,8 +57,8 @@ StarSystems.prototype.init = function() {
             newSystem.resources.sm = 2 * this.c_dyswarmCostSM
             newSystem.resources.flux = 0
         } else {
-            newSystem.x = Math.random() * 2000 - 1000
-            newSystem.y = Math.random() * 2000 - 1000
+            newSystem.x = Math.random() * 1600 - 800
+            newSystem.y = Math.random() * 1200 - 600
             newSystem.name = this.createName()
             newSystem.colorAura = [255, 50, 0]
             newSystem.colorBody = [255, 50, 50]
