@@ -7,25 +7,81 @@
     </head>
 
     <body>
-        <div id="header">
-            <div id="credits">
-                <span id="title">Hard Reset</span>
-                <span id="copyright">&copy; 2017 - Etienne Ott</span>
+        <div class="centerDiv">
+            <div id="header">
+                <div id="credits">
+                    <span id="title">Hard Reset</span>
+                    <span id="copyright">&copy; 2017 - Etienne Ott</span>
+                </div>
             </div>
-        </div>
 
-        <div id="gameView">
-            <canvas
-                id="screen" width="800" height="600"
-                onmousemove="app.input.mouseMove(event)"
-                onmousedown="app.input.mouseUpDown(event)"
-                onmouseup="app.input.mouseUpDown(event)">
-            </canvas>
-        </div>
+            <div id="gameView">
+                <canvas
+                    id="screen" width="800" height="600"
+                    onmousemove="app.input.mouseMove(event)"
+                    onmousedown="app.input.mouseUpDown(event)"
+                    onmouseup="app.input.mouseUpDown(event)">
+                </canvas>
+            </div>
 
-        <div id="footer">
-            <p><strong>Credits:</strong></p>
-            <p>"mute", "unmute" by mikhog - <a href="http://opengameart.org/content/play-pause-mute-and-unmute-buttons">Source</a> under CC-0</p>
+            <div id="manual">
+                <h1>Manual</h1>
+                <h2>Goal</h2>
+                <p>
+                    The universe is running out of power! Many generations of stars have used up most of the fusable elements
+                    and the expansion of space itself has pushed all but the closest systems out of reach forever. Only a handful
+                    of cold Red Dwarfs are still putting out usable energy. The only solution is to restart the universe!
+                    <br><br>
+                    In order to do that you will need to gather enough resources in the main system (named Alpha Black) to build
+                    the Q-Pinch; the device that will trigger the universe to restart and consume the old matter in the process.
+                    If you fail to build this device, the universe is doomed to suffer a slow and drawn-out Heat Death.
+                </p>
+
+                <h2>Navigation</h2>
+                <p>
+                    <img src="assets/images/examples/map_example.png" width="199" height="191" alt="" />
+                    You can navigate around by clicking and holding empty space between systems and then dragging the view. In the
+                    upper right corner of the view there is a minimap. The minimap shows the system as white dots, while the main
+                    system is a red dot. The smaller rectangle shows how the viewport relates to the overall
+                    space and how much margin in each direction you have for navigation.
+                </p>
+
+                <h2>Systems</h2>
+                <p>
+                    <img src="assets/images/examples/system_example.png" width="243" height="383" alt="" />
+                    Each system, except the main one, has a variable and hidden amount of fuel left. The star of the system puts
+                    out energy, which is indicated by the Flux (Fx). As the amount of fuel decreases, so does the Flux, until no
+                    fuel is left and the star goes out. As long as there is Flux left, this energy can be stored as Anti-Matter (AM).
+                    <br><br>
+                    In order to create AM you will need to construct a Dyswarm in the system. The creation of the Dyswarm takes AM
+                    and Solid Matter (SM) itself, so you will need to get resources to the system first (see Flow Lines). The building
+                    costs for a Dyswarm are 1e5 AM and 1e6 SM.
+                    <br><br>
+                    The building costs for the Q-Pinch are ???
+                </p>
+
+                <h2>Flow Lines</h2>
+                <p>
+                    <img src="assets/images/examples/flow_example.png" width="443" height="344" alt="" />
+                    In order to get AM and SM from system to system you can construct Flow Lines. The Flow Lines itself don't cost
+                    anything, but transport does. Transporting AM first tries to use some of the system's Flux and, if it is not
+                    sufficient, takes some of the AM to be transported. Transport by Flux is cheaper overall, but obviously not
+                    possible when the star has run out of fuel. Transport of SM always requires some AM.
+                    <br><br>
+                    Each system has two sets of inflow and outflow sockets. To place a new Flow Line, click the outflow socket (the
+                    right one) of a system and then click the inflow socket of the target system. You can remove an existing Flow
+                    Line by clicking the little X placed at the mid-point of the line.
+                    <br><br>
+                    The distance of a Flow Line also effects how much the transport costs. It can be cheaper to first transport AM/SM
+                    to a system closer to the main system. However keep in my mind that you then pay twice the transport cost, so only
+                    use this method to avoid very long Flow Lines.
+                </p>
+            </div>
+
+            <div id="footer">
+                <p><strong>Credits:</strong></p>
+                <p>"mute", "unmute" by mikhog - <a href="http://opengameart.org/content/play-pause-mute-and-unmute-buttons">Source</a> under CC-0</p>
+            </div>
         </div>
 
         <script src="library/gfx.js" type="text/javascript"></script>
