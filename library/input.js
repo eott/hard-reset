@@ -11,6 +11,10 @@ Input = function(app) {
 }
 
 Input.prototype.mouseUpDown = function(ev) {
+    if (!this.app.gameHasStarted) {
+        this.app.gameHasStarted = true
+    }
+
     if (this.mouseStatus == 1 && ev.buttons == 0) {
         this.app.systems.handleMouseClick(ev)
     }
@@ -19,6 +23,10 @@ Input.prototype.mouseUpDown = function(ev) {
 }
 
 Input.prototype.mouseMove = function(ev) {
+    if (!this.app.gameHasStarted) {
+        return
+    }
+
     this.mouseDiff = [ev.layerX - this.mousePos[0], ev.layerY - this.mousePos[1]]
     this.mousePos = [ev.layerX, ev.layerY]
 

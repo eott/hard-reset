@@ -70,3 +70,11 @@ GFX.prototype.drawEndScreen = function() {
     this.ctx.fillText("across. Maybe we should've written something", 120, 290)
     this.ctx.fillText("into Pi. Oh, well. There's always next time!", 120, 320)
 }
+
+GFX.prototype.drawStartScreen = function() {
+    this.ctx.clearRect(0, 0, 800, 600)
+
+    this.ctx.fillStyle = "#ffffff"
+    this.ctx.font = "40px Consolas"
+    this.ctx.fillText("Start Game", 280, 300)
+}

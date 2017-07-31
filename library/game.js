@@ -20,6 +20,11 @@ App = function() {
 }
 
 App.prototype.gameLoop = function() {
+    if (!this.gameHasStarted) {
+        this.gfx.drawStartScreen()
+        return
+    }
+
     this.draw()
     this.systems.update()
 
