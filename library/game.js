@@ -11,6 +11,10 @@ App = function() {
 
     this.framerate = 20
     this.simSpeed = 1
+    this.fadeProgress = 0
+    this.fadeSpeed = 1 / (5 * this.framerate)
+
+    this.gameIsWon = false
 
     this.loop = window.setInterval('app.gameLoop()', 1000 / this.framerate);
 }
@@ -18,7 +22,10 @@ App = function() {
 App.prototype.gameLoop = function() {
     this.draw()
     this.systems.update()
-    this.gfx.drawMinimap(this.systems.systems)
+
+    if (this.gameIsWon) {
+        this.fadeProgress += this.fadeSpeed
+    }
 }
 
 App.prototype.draw = function() {
@@ -30,4 +37,17 @@ App.prototype.draw = function() {
     this.ctx.lineWidth = 1
 
     this.systems.draw()
+    this.gfx.drawMinimap(this.systems.systems)
+
+    if (this.gameIsWon) {
+        if (this.fadeProgress < 1) {
+            this.gfx.drawFade(this.fadeProgress)
+        } else {
+            this.gfx.drawEndScreen()
+        }
+    }
+}
+
+App.prototype.triggerWin = function() {
+    this.gameIsWon = true
 }

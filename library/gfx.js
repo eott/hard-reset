@@ -52,17 +52,21 @@ GFX.prototype.drawMinimap = function(systems) {
     this.ctx.lineTo(650 + dx, 45 + dy)
     this.ctx.closePath()
     this.ctx.stroke()
+}
 
+GFX.prototype.drawFade = function(percent) {
+    this.ctx.fillStyle = "rgba(0,0,0," + percent + ")"
+    this.ctx.fillRect(0, 0, 800 ,600)
+}
 
-    /*this.ctx.lineWidth = 1
-    this.ctx.strokeStyle = "#888888"
-    var dx = 75 * this.app.shiftX / 1800
-    var dy = 75 * this.app.shiftY / 1600
-    this.ctx.beginPath()
-    this.ctx.moveTo(650 + 75 - dx, 0 + 75 - dy)
-    this.ctx.lineTo(725 + 75 - dx, 0 + 75 - dy)
-    this.ctx.lineTo(725 + 75 - dx, 56 + 75 - dy)
-    this.ctx.lineTo(650 + 75 - dx, 56 + 75 - dy)
-    this.ctx.closePath()
-    this.ctx.stroke()*/
+GFX.prototype.drawEndScreen = function() {
+    this.ctx.clearRect(0, 0, 800, 600)
+
+    this.ctx.fillStyle = "#ffffff"
+    this.ctx.font = "24px Consolas"
+    this.ctx.fillText("You did it! The Q-Pinch worked flawlessly", 120, 200)
+    this.ctx.fillText("and the universe gets another chance. It's", 120, 230)
+    this.ctx.fillText("just too bad that we can't get any message", 120, 260)
+    this.ctx.fillText("across. Maybe we should've written something", 120, 290)
+    this.ctx.fillText("into Pi. Oh, well. There's always next time!", 120, 320)
 }

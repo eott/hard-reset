@@ -167,7 +167,11 @@ StarSystems.prototype.draw = function() {
         this.ctx.stroke()
 
         if (i == 0) {
-            this.ctx.fillText("Build Q-Pinch", x + 15, y + 295)
+            if (this.systems[i].hasBuilding) {
+                this.ctx.fillText("Has Q-Pinch", x + 15, y + 295)
+            } else {
+                this.ctx.fillText("Build Q-Pinch", x + 15, y + 295)
+            }
         } else {
             if (this.systems[i].hasBuilding) {
                 this.ctx.fillText("Has Dyswarm", x + 15, y + 295)
@@ -354,7 +358,10 @@ StarSystems.prototype.handleMouseClick = function(ev) {
                 && y <= this.systems[i].y + 305
             ) {
                 if (i == 0) {
-                    // todo
+                    this.systems[i].resources.am -= this.c_qpinchCostAM
+                    this.systems[i].resources.sm -= this.c_qpinchCostSM
+                    this.systems[i].hasBuilding = true
+                    this.app.triggerWin()
                 } else {
                     if (
                         !this.systems[i].hasBuilding
