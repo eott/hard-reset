@@ -137,13 +137,17 @@ StarSystems.prototype.draw = function() {
         c = this.systems[i].colorBody
         this.gfx.circle(x + 100, y + 60, 15, 'rgba(' + c[0] + ','+ c[1] + ',' + c[2] + ',1.0)', 1, true)
 
+        this.ctx.fillStyle = "#ffffff"
+
         // Draw AM inflow/outflow sockets
-        this.gfx.circle(x + 30, y + 200, 15, "#ffffff", 2, false)
-        this.gfx.circle(x + 80, y + 200, 15, "#ffffff", 2, false)
+        this.ctx.fillText("AM Flow:", x + 10, y + 205)
+        this.gfx.circle(x + 120, y + 200, 15, "#ffffff", 2, false)
+        this.gfx.circle(x + 170, y + 200, 15, "#ffffff", 2, false)
 
         // Draw SM inflow/outflow sockets
-        this.gfx.circle(x + 30, y + 240, 15, "#ffffff", 2, false)
-        this.gfx.circle(x + 80, y + 240, 15, "#ffffff", 2, false)
+        this.ctx.fillText("SM Flow:", x + 10, y + 245)
+        this.gfx.circle(x + 120, y + 240, 15, "#ffffff", 2, false)
+        this.gfx.circle(x + 170, y + 240, 15, "#ffffff", 2, false)
 
         // Draw building buttons
         this.ctx.beginPath()
@@ -172,7 +176,7 @@ StarSystems.prototype.draw = function() {
     // Draw current flow line
     if (this.isDrawingFlow) {
         this.ctx.beginPath()
-        this.ctx.moveTo(this.flowSource.x + 80 + this.app.shiftX, this.flowSource.y + 200 + this.app.shiftY)
+        this.ctx.moveTo(this.flowSource.x + 170 + this.app.shiftX, this.flowSource.y + 200 + this.app.shiftY)
         this.ctx.lineTo(this.app.input.mousePos[0], this.app.input.mousePos[1])
         this.ctx.closePath()
         this.ctx.stroke()
@@ -181,8 +185,8 @@ StarSystems.prototype.draw = function() {
     // Draw existing flow lines
     for (var i = 0; i < this.flows.length; i++) {
         this.ctx.beginPath()
-        this.ctx.moveTo(this.flows[i][0].x + 80 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY)
-        this.ctx.lineTo(this.flows[i][1].x + 30 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY)
+        this.ctx.moveTo(this.flows[i][0].x + 170 + this.app.shiftX, this.flows[i][0].y + 200 + this.app.shiftY)
+        this.ctx.lineTo(this.flows[i][1].x + 120 + this.app.shiftX, this.flows[i][1].y + 200 + this.app.shiftY)
         this.ctx.closePath()
         this.ctx.stroke()
     }
@@ -196,7 +200,7 @@ StarSystems.prototype.handleMouseClick = function(ev) {
         // Flow lines
         if (this.isDrawingFlow) {
             var distance = Math.sqrt(
-                (x - this.systems[i].x - 30) * (x - this.systems[i].x - 30)
+                (x - this.systems[i].x - 120) * (x - this.systems[i].x - 120)
                 + (y - this.systems[i].y - 200) * (y - this.systems[i].y - 200)
             )
 
@@ -207,7 +211,7 @@ StarSystems.prototype.handleMouseClick = function(ev) {
             }
         } else {
             var distance = Math.sqrt(
-                (x - this.systems[i].x - 80) * (x - this.systems[i].x - 80)
+                (x - this.systems[i].x - 170) * (x - this.systems[i].x - 170)
                 + (y - this.systems[i].y - 200) * (y - this.systems[i].y - 200)
             )
 
