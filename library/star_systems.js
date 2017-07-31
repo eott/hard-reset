@@ -355,7 +355,8 @@ StarSystems.prototype.handleMouseClick = function(ev) {
                     // todo
                 } else {
                     if (
-                        this.systems[i].resources.am >= this.c_dyswarmCostAM
+                        !this.systems[i].hasBuilding
+                        && this.systems[i].resources.am >= this.c_dyswarmCostAM
                         && this.systems[i].resources.sm >= this.c_dyswarmCostSM
                     ) {
                         this.systems[i].resources.am -= this.c_dyswarmCostAM
