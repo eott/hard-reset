@@ -10,7 +10,7 @@ StarSystems = function(app) {
     this.isDrawingFlow = false
     this.flowSource = undefined
 
-    this.boundingBox = [200, 300]
+    this.boundingBox = [200, 320]
 
     this.c_maxAMFlow = 1e4
     this.c_AMFlowCost = 5e2
@@ -18,6 +18,8 @@ StarSystems = function(app) {
     this.c_minFlux = 3e5
     this.c_fluxRate = 5e-2
     this.c_AMProductionRate = 3e-3
+    this.c_dyswarmCostAM = 1e5
+    this.c_dyswarmCostSM = 1e6
 
     this.init()
 }
@@ -33,7 +35,8 @@ StarSystems.prototype.init = function() {
         newSystem.resources.am = 0
         newSystem.resources.sm = 1e6
         newSystem.resources.se = 1e9
-        newSystem.producesAM = true
+        newSystem.producesAM = false
+        newSystem.hasBuilding = false
 
         if (nrCreated == 0) {
             newSystem.x = 350
@@ -42,6 +45,8 @@ StarSystems.prototype.init = function() {
             newSystem.colorAura = [255, 255, 255]
             newSystem.colorBody = [0, 0, 0]
             newSystem.resources.se = 0
+            newSystem.resources.am = 2 * this.c_dyswarmCostAM
+            newSystem.resources.sm = 2 * this.c_dyswarmCostSM
             newSystem.resources.flux = 0
         } else {
             newSystem.x = Math.random() * 2000 - 1000
@@ -132,9 +137,32 @@ StarSystems.prototype.draw = function() {
         c = this.systems[i].colorBody
         this.gfx.circle(x + 100, y + 60, 15, 'rgba(' + c[0] + ','+ c[1] + ',' + c[2] + ',1.0)', 1, true)
 
-        // Draw inflow/outflow sockets
+        // Draw AM inflow/outflow sockets
         this.gfx.circle(x + 30, y + 200, 15, "#ffffff", 2, false)
         this.gfx.circle(x + 80, y + 200, 15, "#ffffff", 2, false)
+
+        // Draw SM inflow/outflow sockets
+        this.gfx.circle(x + 30, y + 240, 15, "#ffffff", 2, false)
+        this.gfx.circle(x + 80, y + 240, 15, "#ffffff", 2, false)
+
+        // Draw building buttons
+        this.ctx.beginPath()
+        this.ctx.moveTo(x + 10, y + 275)
+        this.ctx.lineTo(x + this.boundingBox[0] - 10, y + 275)
+        this.ctx.lineTo(x + this.boundingBox[0] - 10, y + 305)
+        this.ctx.lineTo(x + 10, y + 305)
+        this.ctx.closePath()
+        this.ctx.stroke()
+
+        if (i == 0) {
+            this.ctx.fillText("Build Q-Pinch", x + 15, y + 295)
+        } else {
+            if (this.systems[i].hasBuilding) {
+                this.ctx.fillText("Has Dyswarm", x + 15, y + 295)
+            } else {
+                this.ctx.fillText("Build Dyswarm", x + 15, y + 295)
+            }
+        }
     }
 
     this.ctx.fillStyle = "#8080ff"
@@ -165,6 +193,7 @@ StarSystems.prototype.handleMouseClick = function(ev) {
         var x = ev.layerX - this.app.shiftX
         var y = ev.layerY - this.app.shiftY
 
+        // Flow lines
         if (this.isDrawingFlow) {
             var distance = Math.sqrt(
                 (x - this.systems[i].x - 30) * (x - this.systems[i].x - 30)
@@ -185,6 +214,30 @@ StarSystems.prototype.handleMouseClick = function(ev) {
             if (distance <= 15) {
                 this.isDrawingFlow = true
                 this.flowSource = this.systems[i]
+            }
+        }
+
+        // Building button
+        if(!this.isDrawingFlow) {
+            if (
+                x >= this.systems[i].x + 10
+                && x <= this.systems[i].x + this.boundingBox[0] - 10
+                && y >= this.systems[i].y + 275
+                && y <= this.systems[i].y + 305
+            ) {
+                if (i == 0) {
+                    // todo
+                } else {
+                    if (
+                        this.systems[i].resources.am >= this.c_dyswarmCostAM
+                        && this.systems[i].resources.sm >= this.c_dyswarmCostSM
+                    ) {
+                        this.systems[i].resources.am -= this.c_dyswarmCostAM
+                        this.systems[i].resources.sm -= this.c_dyswarmCostSM
+                        this.systems[i].producesAM = true
+                        this.systems[i].hasBuilding = true
+                    }
+                }
             }
         }
     }
@@ -224,7 +277,7 @@ StarSystems.prototype.update = function() {
 
         remainingFlux = this.checkFlowsForSystem(i)
 
-        if (this.systems[i].producesAM) {
+        if (this.systems[i].producesAM && this.systems[i].hasBuilding) {
             this.systems[i].resources.am += this.c_AMProductionRate * remainingFlux
         }
     }

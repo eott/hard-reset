@@ -10,7 +10,7 @@ App = function() {
     this.systems = new StarSystems(this)
 
     this.framerate = 20
-    this.simSpeed = 20
+    this.simSpeed = 1
 
     this.loop = window.setInterval('app.gameLoop()', 1000 / this.framerate);
 }
